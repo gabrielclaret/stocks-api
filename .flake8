@@ -1,0 +1,3 @@
+[flake8]
+application-import-names = api, tests
+import-order-style = pep8

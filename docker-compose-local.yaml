@@ -1,0 +1,38 @@
+version: '2'
+services:
+  mongo-db:
+    image: mongo:4.0
+    container_name: app-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+
+  gcs-mock:
+    command: -scheme http
+    container_name: gcs-mock
+    image: fsouza/fake-gcs-server
+    volumes:
+      - ./tests/infra/data:/data
+    ports:
+      - 4443:4443
+    depends_on:
+      - mongo-db
+
+  app-infra:
+    build:
+      context: ./
+      dockerfile: infra.Dockerfile
+    container_name: app-infra-tests
+    environment:
+      - STORAGE_EMULATOR_HOST=http://gcs-mock:4443
+      - MONGO_DATABASE=project-database
+      - MONGO_URI=mongodb://mongoadmin:secret@app-mongo:27017/project-database?authSource=admin&authMechanism=SCRAM-SHA-1
+    command: [
+      "python",
+      "/infra/setup.py"
+    ]
+    depends_on:
+      - gcs-mock
+      - mongo-db
