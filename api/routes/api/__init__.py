@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from api.routes.endpoints import stocks
+from api.routes.v1.endpoints import stocks
 
 endpoint_router = APIRouter()
 

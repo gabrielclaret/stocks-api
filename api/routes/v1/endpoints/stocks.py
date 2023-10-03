@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.params import Query
 
 from api.dependencies.depends import get_service
-from api.schemas.stock import Stock, StockListing
+from api.schemas.stock import StockListing, StockResponse
 from api.services.stocks import StockService
 
 router = APIRouter()
@@ -36,17 +36,17 @@ async def list_metadata(
     return StockListing(stocks=stocks, skip=skip, limit=limit, total=total)
 
 
-@router.get("{id}")
+@router.get("/{id}")
 async def get(
     id: str, stocks_service: StockService = Depends(get_service(StockService))
-) -> Stock:
+) -> StockResponse:
     """Get a stock with its time series by id.
 
     Path parameters:
     **id (str)**: document id
     """
     try:
-        result = stocks_service.get_by_id(id)
+        stock, stock_time_series = stocks_service.get_by_id(id)
     except Exception as e:
         logging.error(e)
         raise HTTPException(
@@ -54,4 +54,4 @@ async def get(
             detail={"description": f"error getting stock with id [{id}]."},
         )
 
-    return result
+    return StockResponse(**stock.model_dump(), time_series=stock_time_series)

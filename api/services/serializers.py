@@ -1,14 +1,18 @@
 import io
 import json
-from enum import Enum
+from typing import Dict
 
 import pandas as pd
+
+from api.schemas.serializer import SerializerType
 
 
 class Serializer:
     """Serializer service base cass."""
 
-    def serialize(self, data: io.BytesIO) -> pd.DataFrame:
+    def serialize(
+        self, data: io.BytesIO, columns_renamer: Dict = None
+    ) -> pd.DataFrame:
         """Serialize incoming buffered data to a pandas DataFrame."""
         raise NotImplementedError()
 
@@ -16,34 +20,47 @@ class Serializer:
 class JsonSerializer(Serializer):
     """Serializer class for json."""
 
-    def serialize(self, data: io.BytesIO) -> pd.DataFrame:
+    def serialize(
+        self, data: io.BytesIO, columns_renamer: Dict = None
+    ) -> pd.DataFrame:
         """Serialize incoming buffered data to a pandas DataFrame."""
         json_data = json.load(data)
-        return pd.DataFrame(json_data)
+        json_dataframe = pd.DataFrame(json_data)
+
+        if columns_renamer:
+            json_dataframe = json_dataframe.rename(columns=columns_renamer)
+
+        return json_dataframe
 
 
 class ExcelSerializer(Serializer):
     """Serializer class for excel."""
 
-    def serialize(self, data: io.BytesIO) -> pd.DataFrame:
+    def serialize(
+        self, data: io.BytesIO, columns_renamer: Dict = None
+    ) -> pd.DataFrame:
         """Serialize incoming buffered data to a pandas DataFrame."""
-        return pd.read_excel(data)
+        excel_dataframe = pd.read_excel(data)
+
+        if columns_renamer:
+            excel_dataframe = excel_dataframe.rename(columns=columns_renamer)
+
+        return excel_dataframe
 
 
 class CsvSerializer(Serializer):
     """Serializer class for csv."""
 
-    def serialize(self, data: io.BytesIO) -> pd.DataFrame:
+    def serialize(
+        self, data: io.BytesIO, columns_renamer: Dict = None
+    ) -> pd.DataFrame:
         """Serialize incoming buffered data to a pandas DataFrame."""
-        return pd.read_csv(data)
+        csv_dataframe = pd.read_csv(data)
 
+        if columns_renamer:
+            csv_dataframe = csv_dataframe.rename(columns=columns_renamer)
 
-class SerializerType(str, Enum):
-    """Serializers base model."""
-
-    JSON = "json"
-    CSV = "csv"
-    EXCEL = "xlsx"
+        return csv_dataframe
 
 
 class SerializerFactory:

@@ -12,7 +12,7 @@ from api.schemas.stock import Stock
 load_dotenv()
 
 
-class StockRepository(BaseRepository):
+class StockMetadataRepository(BaseRepository):
     """Stocks repository class."""
 
     def __init__(self, db: Database) -> None:
