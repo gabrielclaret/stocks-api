@@ -14,7 +14,7 @@ services:
     container_name: gcs-mock
     image: fsouza/fake-gcs-server
     volumes:
-      - ./tests/infra/data:/data
+      - ./infra/data:/data
     ports:
       - 4443:4443
     depends_on:
