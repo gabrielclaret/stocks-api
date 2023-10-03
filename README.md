@@ -11,3 +11,6 @@ Chore:
 - Logging
 - JWT Authentication
 
+Tests:
+- Integration tests
+- Unit tests for services
