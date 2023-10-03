@@ -22,7 +22,7 @@ class Stock(BaseModel):
     symbol: str
     series: str
     isin_code: str
-    format: str
+    file_format: str
     created_at: Optional[datetime]
     last_updated: Optional[datetime]
 
