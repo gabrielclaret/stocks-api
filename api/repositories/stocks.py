@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, List
 
 import pymongo
@@ -68,10 +69,12 @@ class StockMetadataRepository(BaseRepository):
         count = self._stock_collection.count_documents({})
 
         if skip > count or skip < 0:
-            raise ValidationException("Invalid Skip value.")
+            logging.error(f"Invalid skip value [{skip}].")
+            raise ValidationException("Invalid skip value.")
 
         if limit < 0 or limit > 100:
-            raise ValidationException("Invalid Limit value.")
+            logging.error(f"Invalid limit value [{limit}].")
+            raise ValidationException("Invalid limit value.")
 
         docs = (
             self._stock_collection.find({}).skip(skip).limit(limit).sort(sort)

@@ -1,6 +1,4 @@
-import logging
-
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.params import Query
 
 from api.dependencies.depends import get_service
@@ -24,14 +22,7 @@ async def list_metadata(
     **limit (int)**: documents limit
     **sort (str)**: field to sort (asc: company_name, desc: -company_name)
     """
-    try:
-        stocks, total = stocks_service.list_metadata(skip, limit, sort)
-    except Exception as e:
-        logging.error(e)
-        raise HTTPException(
-            status_code=500,
-            detail={"description": f"error getting stock with id [{id}]."},
-        )
+    stocks, total = stocks_service.list(skip, limit, sort)
 
     return StockListing(stocks=stocks, skip=skip, limit=limit, total=total)
 
@@ -43,15 +34,8 @@ async def get(
     """Get a stock with its time series by id.
 
     Path parameters:
-    **id (str)**: document id
+    **id (str)**: stock id
     """
-    try:
-        stock, stock_time_series = stocks_service.get_by_id(id)
-    except Exception as e:
-        logging.error(e)
-        raise HTTPException(
-            status_code=500,
-            detail={"description": f"error getting stock with id [{id}]."},
-        )
+    stock, stock_time_series = stocks_service.get(id)
 
     return StockResponse(**stock.model_dump(), time_series=stock_time_series)

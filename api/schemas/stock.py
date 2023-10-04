@@ -43,6 +43,11 @@ class Stock(BaseModel):
         data["id"] = data["_id"]
         return Stock(**data)
 
+    @classmethod
+    def fields(cls) -> List[str]:
+        """Return all fields from Stock base model."""
+        return list(cls.__fields__)
+
 
 class StockSeries(BaseModel):
     """Stock observation representation."""

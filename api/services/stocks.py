@@ -1,4 +1,7 @@
+import logging
 from typing import List, Tuple
+
+from fastapi.exceptions import ValidationException
 
 from api.repositories.stocks import StockMetadataRepository
 from api.repositories.storage import StockSeriesRepository
@@ -10,6 +13,7 @@ from api.schemas.stock import (
     StockSeries,
 )
 from api.services.serializers import SerializerFactory
+from api.utils import api_errors
 
 
 class StockService:
@@ -33,9 +37,14 @@ class StockService:
             StockFileType.JSON: self._json_stock_series_repository,
         }
 
-    def get_by_id(self, id: str) -> Tuple[Stock, StockSeries]:
-        """Get a stock with its series given stock id."""
+    def get(self, id: str) -> Tuple[Stock, StockSeries]:
+        """Get a stock and its series given a stock id."""
         stock = self._stock_metadata_repository.get_by_id(id)
+
+        if not stock:
+            api_errors.raise_error_response(
+                api_errors.NotFound, detail=f"Stock with id [{id}] not found."
+            )
 
         series_repository: StockSeriesRepository = self._series_repository[
             stock.file_format
@@ -65,10 +74,38 @@ class StockService:
 
         return [(sort_input, order)]
 
-    def list_metadata(self, skip: int, limit: int, sort_input: str) -> Stock:
-        """List stock metadata."""
-        # TODO: Validate sort_input
+    def _is_valid_sort_input(self, sort_input: str) -> bool:
+        for field in Stock.fields():
+            if field in sort_input:
+                return True
 
+        return False
+
+    def list(self, skip: int, limit: int, sort_input: str) -> Stock:
+        """List stock metadata."""
         sort = self._format_sort(sort_input)
-        stocks = self._stock_metadata_repository.list(skip, limit, sort)
-        return stocks
+
+        if not self._is_valid_sort_input(sort_input):
+            logging.error(f"Invalid query parameter 'sort' [{sort}].")
+            api_errors.raise_error_response(
+                api_errors.ErrorInvalidQueryParameters,
+                detail="Invalid query parameter 'sort'.",
+            )
+
+        try:
+            stocks, total = self._stock_metadata_repository.list(
+                skip, limit, sort
+            )
+        except ValidationException:
+            api_errors.raise_error_response(
+                api_errors.ErrorInvalidQueryParameters,
+            )
+        except Exception as e:
+            logging.error(
+                f"There was an error listing from database. Error [{e}]."
+            )
+            api_errors.raise_error_response(api_errors.ErrorInternal)
+
+        logging.info(f"Total stock metadata [{total}].")
+
+        return stocks, total
