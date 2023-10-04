@@ -8,7 +8,7 @@ from api.schemas.serializer import SerializerType
 
 
 class Serializer:
-    """Serializer service base cass."""
+    """Serializer service base class."""
 
     def serialize(
         self, data: io.BytesIO, columns_renamer: Dict = None
@@ -78,7 +78,7 @@ class SerializerFactory:
         return self
 
     def build(self) -> Serializer:
-        """Build proper instance ."""
+        """Build instance."""
         if not self._format:
             raise Exception("no format provided.")
 
