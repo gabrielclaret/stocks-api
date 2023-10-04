@@ -78,6 +78,7 @@ class StockResponse(BaseModel):
     symbol: str
     series: str
     isin_code: str
+    file_format: str
     created_at: datetime
     last_updated: datetime
     time_series: StockSeries
