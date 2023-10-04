@@ -1,11 +1,14 @@
 FROM python:3.11-slim-bookworm
 
-WORKDIR /app
+ENV PYTHONWRITEBYTECODE 1
+ENV PYTHONBUFFERED 1
 
-COPY requirements.txt .
+RUN mkdir api
 
+COPY api api
+COPY requirements.txt requirements.txt 
 RUN pip install -r requirements.txt
 
-COPY . /app/
+ENV TZ="UTC"
 
-EXPOSE 8000
+CMD python -m uvicorn api.main:app --host 0.0.0.0 --port $PORT
