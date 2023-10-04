@@ -4,7 +4,8 @@
 ### TODO:
 Features:
 - Create a new Stock
-- Search by some Stock fields
+- Filter by specific Stock fields
+- Aggregate time series data 
 
 Chore:
 - Error Responses & Validation
@@ -12,5 +13,4 @@ Chore:
 - JWT Authentication
 
 Tests:
-- Integration tests
 - Unit tests for services

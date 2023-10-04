@@ -67,7 +67,7 @@ class StockService:
 
     def list_metadata(self, skip: int, limit: int, sort_input: str) -> Stock:
         """List stock metadata."""
-        # TODO: voltar erro caso input de sort for errado
+        # TODO: Validate sort_input
 
         sort = self._format_sort(sort_input)
         stocks = self._stock_metadata_repository.list(skip, limit, sort)
