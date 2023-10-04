@@ -34,7 +34,7 @@ services:
         "pytest",
         "-v",
         "--cov-config=.coveragerc",
-        "--cov=."
+        "--cov=api"
     ]
     depends_on:
       - gcs-mock

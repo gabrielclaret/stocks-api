@@ -20,7 +20,7 @@ DEFAULT_TIMEZONE = timezone.utc
 class BaseTest:
     """Class that defines base test."""
 
-    def setup_local_data(self, collection: Collection) -> None:
+    def _setup_local_data(self, collection: Collection) -> None:
         """Insert local data for testing."""
         stock_metadata = serialize_csv(STOCK_METADATA)
 
@@ -30,15 +30,14 @@ class BaseTest:
 
             logging.info(f"inserted stock with id [{_stock.id}]")
 
-    @classmethod
-    def setup_class(cls) -> None:
+    def setup_class(self) -> None:
         """Class setup.
 
         Setup any state specific to the execution of the given class (which
         usually contains tests).
         """
         set_envs_for_tests()
-        cls.settings = get_settings_tests()
+        self.settings = get_settings_tests()
 
         def _get_app() -> FastAPI:
             from api.config.settings import get_settings
@@ -50,13 +49,12 @@ class BaseTest:
 
             return app
 
-        cls.app_client = TestClient(_get_app())
+        self.app_client = TestClient(_get_app())
 
-        cls.database = get_database_tests()
-        cls.stocks_collection = cls.database.get_collection("stocks")
-        cls.setup_local_data(cls, cls.stocks_collection)
+        self.database = get_database_tests()
+        self.stocks_collection = self.database.get_collection("stocks")
 
-        cls.STOCK_SERIES_RENAMER = {
+        self.STOCK_SERIES_RENAMER = {
             "Date": "date",
             "Symbol": "symbol",
             "Series": "series",
@@ -73,6 +71,9 @@ class BaseTest:
             "Deliverable Volume": "deliverable_volume",
             "%Deliverble": "deliverable_percent",
         }
+
+    def setup_method(self) -> None:
+        self._setup_local_data(self.stocks_collection)
 
     def teardown_method(self) -> None:
         """Teardown any state that was previously setup."""

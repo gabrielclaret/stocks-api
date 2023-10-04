@@ -1,6 +1,5 @@
 [run]
 omit = tests/*
-branch = True
 
 [report]
 skip_empty = True

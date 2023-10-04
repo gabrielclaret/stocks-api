@@ -6,9 +6,13 @@ local-environment:
 	docker-compose -f docker-compose-local.yaml down --remove-orphans
 	docker-compose -f docker-compose-local.yaml up --build 
 
-tests:
+run-tests:
 	docker-compose -f docker-compose-tests.yaml down --remove-orphans
 	docker-compose -f docker-compose-tests.yaml up --build --exit-code-from app-tests
+
+tests-local-environment:
+	docker-compose -f docker-compose-tests.yaml down --remove-orphans
+	docker-compose -f docker-compose-tests.yaml up --build mongo-db gcs-mock
 
 run-docker:
 	docker build -t stocks-api .
