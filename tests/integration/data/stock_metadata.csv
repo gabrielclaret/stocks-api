@@ -1,0 +1,7 @@
+company_name,industry,symbol,series,isin_code,file_format
+Adani Ports and Special Economic Zone Ltd.,SERVICES,ADANIPORTS,EQ,INE742F01042,json
+Asian Paints Ltd.,CONSUMER GOODS,ASIANPAINT,EQ,INE021A01026,json
+Grasim Industries Ltd.,CEMENT & CEMENT PRODUCTS,GRASIM,EQ,INE047A01021,xlsx
+HCL Technologies Ltd.,IT,HCLTECH,EQ,INE860A01027,xlsx
+Nestle India Ltd.,CONSUMER GOODS,NESTLEIND,EQ,INE239A01016,csv
+NTPC Ltd.,ENERGY,NTPC,EQ,INE733E01010,csv
