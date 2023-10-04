@@ -46,7 +46,7 @@ class Stock(BaseModel):
     @classmethod
     def fields(cls) -> List[str]:
         """Return all fields from Stock base model."""
-        return list(cls.__fields__)
+        return list(cls.model_fields.keys())
 
 
 class StockSeries(BaseModel):
